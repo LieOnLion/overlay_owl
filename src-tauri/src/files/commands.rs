@@ -1,5 +1,3 @@
-use serde::Serialize;
-
 use super::util::{get_dir_files_as_vec, File};
 
 #[tauri::command]
