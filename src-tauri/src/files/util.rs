@@ -28,14 +28,14 @@ pub fn make_file_struct(path: &str, file: DirEntry) -> File {
     let is_directory: bool = file.metadata().ok().unwrap().is_dir();
     return File {
         path: path.to_string(),
-        name: remove_extention(&file_name),
-        extention: get_file_extention(&file_name),
+        name: remove_extention(&file_name, is_directory),
+        extention: get_file_extention(&file_name, is_directory),
         is_dir: is_directory,
     };
 }
 
-pub fn remove_extention(file_name: &str) -> String {
-    if !file_name.contains(".") {
+pub fn remove_extention(file_name: &str, is_dir: bool) -> String {
+    if !file_name.contains(".") || is_dir {
         return file_name.to_string();
     };
     let mut file_name_split: Vec<&str> = file_name.split(".").collect();
@@ -43,8 +43,8 @@ pub fn remove_extention(file_name: &str) -> String {
     return file_name_split.join(".").to_string();
 }
 
-pub fn get_file_extention(file_name: &str) -> String {
-    if !file_name.contains(".") {
+pub fn get_file_extention(file_name: &str, is_dir: bool) -> String {
+    if !file_name.contains(".") || is_dir {
         return "".to_string();
     };
     let file_name_split: Vec<&str> = file_name.split(".").collect();
