@@ -4,7 +4,8 @@ use std::fs::{self, DirEntry};
 pub struct File {
     path: String,
     name: String,
-    extention: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    extention: Option<String>,
     is_dir: bool,
 }
 
@@ -26,16 +27,24 @@ pub fn get_dir_files_as_vec(path: &str) -> Vec<File> {
 pub fn make_file_struct(path: &str, file: DirEntry) -> File {
     let file_name: String = file.file_name().into_string().unwrap();
     let is_directory: bool = file.metadata().ok().unwrap().is_dir();
+    if is_directory {
+        return File {
+            path: path.to_string(),
+            name: file_name,
+            extention: Default::default(),
+            is_dir: is_directory,
+        };
+    }
     return File {
         path: path.to_string(),
-        name: remove_extention(&file_name, is_directory),
-        extention: get_file_extention(&file_name, is_directory),
+        name: remove_extention(&file_name),
+        extention: Some(get_file_extention(&file_name)),
         is_dir: is_directory,
     };
 }
 
-pub fn remove_extention(file_name: &str, is_dir: bool) -> String {
-    if !file_name.contains(".") || is_dir {
+pub fn remove_extention(file_name: &str) -> String {
+    if !file_name.contains(".") {
         return file_name.to_string();
     };
     let mut file_name_split: Vec<&str> = file_name.split(".").collect();
@@ -43,8 +52,8 @@ pub fn remove_extention(file_name: &str, is_dir: bool) -> String {
     return file_name_split.join(".").to_string();
 }
 
-pub fn get_file_extention(file_name: &str, is_dir: bool) -> String {
-    if !file_name.contains(".") || is_dir {
+pub fn get_file_extention(file_name: &str) -> String {
+    if !file_name.contains(".") {
         return "".to_string();
     };
     let file_name_split: Vec<&str> = file_name.split(".").collect();
