@@ -9,7 +9,8 @@ function App() {
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(JSON.parse(await invoke("get_dir_stuff", { path: name() })));
-    play(`${name()}/${greetMsg()[0]}.mp3`)
+    console.log(JSON.stringify(greetMsg(), null, 4))
+    // play(`${name()}/${greetMsg()[0]}.mp3`)
   }
 
   const play = (path: string) => {
